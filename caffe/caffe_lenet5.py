@@ -48,7 +48,7 @@ if __name__ == "__main__":
                 solver.test_nets[0].forward()
                 correct += sum(solver.test_nets[0].blobs['score'].data.argmax(1)
                                == solver.test_nets[0].blobs['label'].data)
-            epoch_acc = correct / 10000
+            epoch_acc = correct / 10000.0
             epoch_loss = sum_loss / test_interval
             history.times.append(time.time()-epoch_start_time)
             history.loss.append(epoch_loss)
