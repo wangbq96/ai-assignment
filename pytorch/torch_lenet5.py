@@ -6,9 +6,25 @@ import torch.optim as optim
 import time
 import csv
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# Parameters
+EPOCH_NUM = 20    # Training Epoch
+BATCH_SIZE = 64   # Batch Size
+LR = 0.01         # Learning Rate
+
+# device (CPU or GPU)
+device = torch.device('cpu')
+# device = torch.device('cuda')
 
 
+# storing evaluation
+class History:
+    def __init__(self):
+        self.times = []
+        self.loss = []
+        self.acc = []
+
+
+# net definition
 class LeNet(nn.Module):
     def __init__(self):
         super(LeNet, self).__init__()
@@ -42,22 +58,11 @@ class LeNet(nn.Module):
         x = self.fc3(x)
         return x
 
-class History:
-    def __init__(self):
-        self.times = []
-        self.loss = []
-        self.acc = []
 
-
-# 超参数设置
-EPOCH = 3          # 遍历数据集次数
-BATCH_SIZE = 128    # 批处理尺寸(batch_size)
-LR = 0.01         # 学习率
-
-# 定义数据预处理方式
+# method of pre-processing data
 transform = transforms.ToTensor()
 
-# 定义训练数据集
+# training data set
 train_set = tv.datasets.MNIST(
     root='./data/',
     train=True,
@@ -65,14 +70,14 @@ train_set = tv.datasets.MNIST(
     transform=transform
 )
 
-# 定义训练批处理数据
+# training data set loader
 train_loader = torch.utils.data.DataLoader(
     train_set,
     batch_size=BATCH_SIZE,
     shuffle=True,
 )
 
-# 定义测试数据集
+# testing data set
 test_set = tv.datasets.MNIST(
     root='./data/',
     train=False,
@@ -80,34 +85,37 @@ test_set = tv.datasets.MNIST(
     transform=transform
 )
 
-# 定义测试批处理数据
+# testing data set loader
 test_loader = torch.utils.data.DataLoader(
     test_set,
     batch_size=BATCH_SIZE,
     shuffle=False,
 )
 
-# 定义损失函数loss function 和优化方式（采用SGD）
+# init net
 net = LeNet().to(device)
-criterion = nn.CrossEntropyLoss()  # 交叉熵损失函数，通常用于多分类问题上
+# loss function
+criterion = nn.CrossEntropyLoss()
+# optimizer
 optimizer = optim.SGD(net.parameters(), lr=LR, momentum=0.9)
 
-# 训练
+# Training
 if __name__ == "__main__":
 
     history = History()
 
     print("Start training...")
-    for epoch in range(EPOCH):
+    for epoch in range(EPOCH_NUM):
+        # one epoch
         epoch_time_start = time.time()
         sum_loss = 0.0
         count = 0
-        # 数据读取
+
         for i, data in enumerate(train_loader):
+            # one batch
             inputs, labels = data
             inputs, labels = inputs.to(device), labels.to(device)
 
-            # 梯度清零
             optimizer.zero_grad()
 
             # forward + backward
@@ -121,6 +129,7 @@ if __name__ == "__main__":
 
         epoch_time = time.time()-epoch_time_start
         history.times.append(epoch_time)
+
         # evaluate
         with torch.no_grad():
             correct = 0
@@ -129,7 +138,6 @@ if __name__ == "__main__":
                 images, labels = data
                 images, labels = images.to(device), labels.to(device)
                 outputs = net(images)
-                # 取得分最高的那个类
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum()
@@ -141,6 +149,7 @@ if __name__ == "__main__":
 
         print("time: {}, loss: {}, accuracy: {}".format(epoch_time, epoch_loss, epoch_acc))
 
+    # save result of evaluation
     with open("record.csv", "w", newline="") as f:
         f_csv = csv.writer(f)
         headers = ["time", "loss", "acc"]
