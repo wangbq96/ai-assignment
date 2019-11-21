@@ -12,8 +12,8 @@ BATCH_SIZE = 64   # Batch Size
 LR = 0.01         # Learning Rate
 
 # device (CPU or GPU)
-device = torch.device('cpu')
-# device = torch.device('cuda')
+# device = torch.device('cpu')
+device = torch.device('cuda')
 
 
 # storing evaluation

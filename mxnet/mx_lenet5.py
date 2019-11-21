@@ -15,8 +15,8 @@ LR = 0.01         # Learning Rate
 
 
 # device (CPU or GPU)
-ctx = mx.cpu()
-# ctx = mx.gpu()
+# ctx = mx.cpu()
+ctx = mx.gpu()
 
 
 # storing evaluation
