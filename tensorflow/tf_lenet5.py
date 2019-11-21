@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # print(history.acc)
 
     # save result of evaluation
-    with open("record.csv", "w", newline="") as f:
+    with open("tensorflow-result.csv", "w", newline="") as f:
         f_csv = csv.writer(f)
         headers = ["time", "loss", "acc"]
         f_csv.writerow(headers)

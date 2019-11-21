@@ -125,7 +125,7 @@ if __name__ == "__main__":
         history.loss.append(epoch_loss)
 
     # save result of evaluation
-    with open("record.csv", "w", newline="") as f:
+    with open("mxnet-result.csv", "w", newline="") as f:
         f_csv = csv.writer(f)
         headers = ["time", "loss", "acc"]
         f_csv.writerow(headers)
